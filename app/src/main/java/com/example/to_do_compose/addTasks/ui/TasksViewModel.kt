@@ -1,12 +1,12 @@
 package com.example.to_do_compose.addTasks.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.to_do_compose.addTasks.domain.AddTaskUseCase
 import com.example.to_do_compose.addTasks.domain.GetTasksUseCase
+import com.example.to_do_compose.addTasks.domain.UpdateTaskUseCase
 import com.example.to_do_compose.addTasks.ui.TasksUiState.*
 import com.example.to_do_compose.addTasks.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
     getTasksUseCase: GetTasksUseCase
 ) : ViewModel(){
 
@@ -57,8 +58,13 @@ class TasksViewModel @Inject constructor(
         _tasks[index] = _tasks[index].let {
             it.copy(selected = !it.selected)
         }
-
          */
+
+        viewModelScope.launch {
+            updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
+        }
+
+
     }
 
     fun onItemRemove(taskModel: TaskModel) {
